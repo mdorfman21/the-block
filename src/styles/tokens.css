@@ -1,0 +1,98 @@
+/*
+ * Design tokens — OPENLANE brand system.
+ *
+ * Palette extracted from the live OPENLANE Canada marketplace (www.openlane.ca):
+ *   #0061FF  primary action blue   (their "Start bidding" / "Buy now" CTAs)
+ *   #0A1B5F  navy ink              (headlines, body, wordmark)
+ *   #F5F5F5  surface gray          (page background)
+ *   Poppins  typeface
+ * Semantic status colors (ok/warn/bad) are chosen to harmonize with the brand.
+ */
+:root {
+  /* ---- Brand ---- */
+  --brand: #0061ff;
+  --brand-600: #0056e6;
+  --brand-700: #0049c4;
+  --brand-050: #eaf1ff;
+  --brand-100: #d6e4ff;
+  --navy: #0a1b5f;
+
+  /* ---- Text ---- */
+  --ink: #0a1b5f;
+  --text: #253357;
+  --text-muted: #5c678a;
+  --text-subtle: #8b93af;
+  --on-brand: #ffffff;
+
+  /* ---- Surfaces ---- */
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --surface-2: #f7f9fd;
+  --surface-sunken: #eef1f7;
+
+  /* ---- Borders ---- */
+  --border: #e5e9f2;
+  --border-strong: #d4dae8;
+
+  /* ---- Semantic status ---- */
+  --ok: #0f9d58;
+  --ok-bg: #e7f6ee;
+  --ok-fg: #0a6e3d;
+  --warn: #e3891c;
+  --warn-bg: #fdf0db;
+  --warn-fg: #8a5212;
+  --bad: #e03b3b;
+  --bad-bg: #fdeaea;
+  --bad-fg: #9d2626;
+
+  /* ---- Radius ---- */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 999px;
+
+  /* ---- Shadow (navy-tinted, not black, for brand cohesion) ---- */
+  --shadow-xs: 0 1px 2px rgba(10, 27, 95, 0.06);
+  --shadow-sm: 0 1px 2px rgba(10, 27, 95, 0.06), 0 2px 6px rgba(10, 27, 95, 0.06);
+  --shadow-md: 0 6px 18px rgba(10, 27, 95, 0.1);
+  --shadow-lg: 0 18px 40px rgba(10, 27, 95, 0.16);
+  --ring: 0 0 0 3px rgba(0, 97, 255, 0.35);
+
+  /* ---- Typography ---- */
+  --font: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-base: 0.9375rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.25rem;
+  --fs-4xl: 3rem;
+
+  /* ---- Spacing ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* ---- Layout ---- */
+  --container: 1200px;
+  --header-h: 64px;
+
+  /* ---- Motion ---- */
+  --t-fast: 120ms ease;
+  --t: 180ms ease;
+
+  /* ---- Z-index ---- */
+  --z-header: 100;
+  --z-modal: 900;
+  --z-toast: 1000;
+}
