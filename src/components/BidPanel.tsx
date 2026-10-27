@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import type { Vehicle } from '../types'
 import { useAuction } from '../hooks/useAuction'
+import { useCountdown } from '../hooks/useCountdown'
 import { auctionService, BidError } from '../services/auctionService'
 import { validateBid } from '../lib/bids'
+import { auctionEndMs, formatCountdown, timeLeftTone } from '../lib/auction'
 import { useToast } from './Toast/ToastProvider'
-import { formatClock, formatCurrency } from '../lib/format'
+import { formatClock, formatCurrency, formatEndsAt } from '../lib/format'
+import { ClockIcon } from './Countdown'
 import styles from './BidPanel.module.css'
 
 export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
@@ -12,6 +15,11 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
   const toast = useToast()
   const min = auction.minNextBid
   const inc = auction.increment
+
+  const endsAt = auctionEndMs(vehicle.id)
+  const timeLeft = useCountdown(endsAt, 1000)
+  const ended = timeLeft <= 0
+  const urgency = timeLeftTone(timeLeft)
 
   const [amount, setAmount] = useState<number>(min)
   const [pending, setPending] = useState(false)
@@ -80,6 +88,31 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
         </span>
       </div>
 
+      <div
+        className={`${styles.countdown} ${
+          ended
+            ? styles.cdEnded
+            : urgency === 'bad'
+              ? styles.cdUrgent
+              : urgency === 'warn'
+                ? styles.cdSoon
+                : ''
+        }`}
+      >
+        <ClockIcon className={styles.clockIcon} />
+        {ended ? (
+          <strong>Auction ended</strong>
+        ) : (
+          <span className={styles.countdownText}>
+            <strong className="tnum">{formatCountdown(timeLeft, true)} left</strong>
+            <span className={styles.endsAt}>Ends {formatEndsAt(endsAt)}</span>
+          </span>
+        )}
+      </div>
+
+      {ended ? (
+        <p className={styles.endedNotice}>Bidding has closed for this lot.</p>
+      ) : (
       <div className={styles.form}>
         <label className={styles.label} htmlFor="bid-amount">
           Your bid
@@ -150,6 +183,7 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
           {pending ? 'Placing bid…' : 'Place bid'}
         </button>
       </div>
+      )}
 
       {auction.yourBids.length > 0 && (
         <div className={styles.history}>

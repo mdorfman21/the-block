@@ -5,7 +5,7 @@ import BidPanel from '../components/BidPanel'
 import Badge from '../components/Badge'
 import ConditionGrade from '../components/ConditionGrade'
 import NotFoundPage from './NotFoundPage'
-import { formatDate, formatOdometer } from '../lib/format'
+import { formatOdometer } from '../lib/format'
 import type { Tone } from '../types'
 import styles from './VehicleDetailPage.module.css'
 
@@ -98,7 +98,6 @@ export default function VehicleDetailPage() {
             <p className={styles.muted}>
               {vehicle.city}, {vehicle.province}
             </p>
-            <p className={styles.muted}>Auction date · {formatDate(vehicle.auctionStart)}</p>
           </section>
         </div>
       </div>

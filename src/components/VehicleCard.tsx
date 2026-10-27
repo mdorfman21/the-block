@@ -1,25 +1,31 @@
 import { Link } from 'react-router-dom'
-import type { Vehicle } from '../types'
+import type { Tone, Vehicle } from '../types'
 import VehiclePhoto from './VehiclePhoto'
 import Badge from './Badge'
 import ConditionGrade from './ConditionGrade'
+import Countdown from './Countdown'
 import { useAuction } from '../hooks/useAuction'
 import { formatCurrency, formatOdometer } from '../lib/format'
+import { auctionEndMs } from '../lib/auction'
+import { toneColorVar } from '../lib/condition'
 import styles from './VehicleCard.module.css'
+
+const TITLE_META: Record<string, { tone: Tone; label: string }> = {
+  clean: { tone: 'ok', label: 'Clean title' },
+  salvage: { tone: 'bad', label: 'Salvage title' },
+  rebuilt: { tone: 'warn', label: 'Rebuilt title' },
+}
 
 export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const auction = useAuction(vehicle)
+  const title = TITLE_META[vehicle.titleStatus] ?? TITLE_META.clean
 
   return (
     <Link to={`/vehicle/${vehicle.id}`} className={styles.card}>
       <div className={styles.photoWrap}>
         <VehiclePhoto vehicle={vehicle} />
-        <div className={styles.photoTags}>
-          {vehicle.titleStatus !== 'clean' && (
-            <Badge tone={vehicle.titleStatus === 'salvage' ? 'bad' : 'warn'}>
-              {vehicle.titleStatus === 'salvage' ? 'Salvage title' : 'Rebuilt title'}
-            </Badge>
-          )}
+        <div className={styles.countdown}>
+          <Countdown target={auctionEndMs(vehicle.id)} variant="badge" tickMs={60000} />
         </div>
         {auction.isHighBidder && (
           <div className={styles.highTag}>
@@ -43,6 +49,11 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         </ul>
 
         <ConditionGrade grade={vehicle.conditionGrade} />
+
+        <div className={styles.titleStatus}>
+          <span className={styles.titleDot} style={{ background: toneColorVar(title.tone) }} />
+          {title.label}
+        </div>
 
         <div className={styles.footer}>
           <div className={styles.priceBlock}>

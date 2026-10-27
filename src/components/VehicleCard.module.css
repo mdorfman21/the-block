@@ -14,19 +14,20 @@
 .card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
-  border-color: var(--border-strong);
+  border-color: var(--brand-100);
   text-decoration: none;
+}
+.card:hover .name {
+  color: var(--brand);
 }
 
 .photoWrap {
   position: relative;
 }
-.photoTags {
+.countdown {
   position: absolute;
   top: 10px;
   left: 10px;
-  display: flex;
-  gap: 6px;
   filter: drop-shadow(0 1px 2px rgba(10, 27, 95, 0.25));
 }
 .highTag {
@@ -52,6 +53,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color var(--t);
 }
 
 .trim {
@@ -83,12 +85,28 @@
   color: var(--text-subtle);
 }
 
+.titleStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+.titleDot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+/* margin-top:auto pins the footer to the bottom so prices align across a row. */
 .footer {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 10px;
-  margin-top: 6px;
+  margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid var(--border);
 }

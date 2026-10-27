@@ -68,3 +68,14 @@ export function formatClock(epochMs: number): string {
     minute: '2-digit',
   }).format(epochMs)
 }
+
+/** `Fri, Oct 31, 3:45 p.m.` — an auction-end timestamp (relative to now, so local). */
+export function formatEndsAt(epochMs: number): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(epochMs)
+}

@@ -51,6 +51,65 @@
   font-size: var(--fs-sm);
 }
 
+.countdown {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  color: var(--ink);
+}
+.clockIcon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+.countdownText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.countdownText strong {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+.endsAt {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+
+.cdSoon {
+  background: var(--warn-bg);
+}
+.cdSoon .clockIcon,
+.cdSoon .countdownText strong {
+  color: var(--warn-fg);
+}
+.cdUrgent {
+  background: var(--bad-bg);
+}
+.cdUrgent .clockIcon,
+.cdUrgent .countdownText strong {
+  color: var(--bad-fg);
+}
+.cdEnded {
+  color: var(--text-muted);
+}
+
+.endedNotice {
+  margin: 0;
+  padding: 14px;
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-align: center;
+}
+
 .form {
   display: flex;
   flex-direction: column;
