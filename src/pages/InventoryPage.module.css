@@ -1,0 +1,175 @@
+.hero {
+  max-width: 680px;
+  margin-bottom: var(--sp-6);
+}
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+.title {
+  margin: 0 0 10px;
+  font-size: var(--fs-3xl);
+}
+.sub {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-md);
+  line-height: 1.6;
+}
+
+.toolbar {
+  max-width: 620px;
+  margin-bottom: var(--sp-6);
+}
+
+/* ---- Two-column layout: filters left, results right ---- */
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+.sidebar {
+  display: none;
+}
+.sidebar.open {
+  display: block;
+}
+.results {
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    display: grid;
+    grid-template-columns: 284px minmax(0, 1fr);
+    align-items: start;
+    gap: var(--sp-8);
+  }
+  .sidebar {
+    display: block;
+    position: sticky;
+    top: calc(var(--header-h) + 20px);
+    max-height: calc(100vh - var(--header-h) - 40px);
+    overflow: auto;
+  }
+  /* More specific than the base .filterToggle rule so it wins regardless of
+     source order — hides the mobile toggle on desktop. */
+  .results .filterToggle {
+    display: none;
+  }
+}
+
+.resultsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.count strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+.for {
+  color: var(--text-muted);
+}
+
+.filterToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.filterToggle:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--r-pill);
+  background: var(--brand);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--sp-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cell {
+  display: flex;
+}
+
+.more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: var(--sp-10);
+}
+.moreBtn {
+  padding: 12px 28px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  transition: border-color var(--t), color var(--t), background var(--t);
+}
+.moreBtn:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--brand-050);
+}
+.moreCount {
+  color: var(--text-subtle);
+  font-size: var(--fs-sm);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--sp-16) var(--sp-4);
+}
+.emptyTitle {
+  margin: 0 0 6px;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--ink);
+}
+.emptySub {
+  margin: 0 0 var(--sp-5);
+  color: var(--text-muted);
+}
+.emptyBtn {
+  padding: 10px 20px;
+  border-radius: var(--r-md);
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+}
+.emptyBtn:hover {
+  background: var(--brand-600);
+}

@@ -1,0 +1,71 @@
+.compact,
+.full {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.caption {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.score {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+.num {
+  font-weight: 700;
+  color: var(--ink);
+}
+.max {
+  color: var(--text-subtle);
+}
+.sep {
+  margin: 0 5px;
+  color: var(--text-subtle);
+}
+.word {
+  font-weight: 600;
+}
+
+.bar {
+  position: relative;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+.fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: var(--r-pill);
+  transition: width var(--t);
+}
+
+/* Larger treatment for the detail page. */
+.full .caption {
+  font-size: var(--fs-sm);
+}
+.full .score {
+  font-size: var(--fs-md);
+}
+.full .num {
+  font-size: var(--fs-lg);
+}
+.full .bar {
+  height: 10px;
+}

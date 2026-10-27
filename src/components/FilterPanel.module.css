@@ -1,0 +1,147 @@
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-4);
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--border);
+}
+.title {
+  font-size: var(--fs-lg);
+}
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.clear {
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.clear:hover {
+  text-decoration: underline;
+}
+.done {
+  display: none;
+}
+
+.section {
+  padding-block: var(--sp-4);
+  border-top: 1px solid var(--border);
+}
+.section:first-of-type {
+  padding-top: 0;
+  border-top: none;
+}
+.sectionTitle {
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: 210px;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+.check:hover {
+  background: var(--surface-2);
+}
+.check input {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--brand);
+}
+.checkLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: var(--fs-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cap {
+  text-transform: capitalize;
+}
+.count {
+  color: var(--text-subtle);
+  font-size: var(--fs-xs);
+}
+.hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.field {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+.prefix {
+  position: absolute;
+  left: 10px;
+  color: var(--text-subtle);
+  font-size: var(--fs-sm);
+  pointer-events: none;
+}
+.num {
+  width: 100%;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+}
+.hasPrefix {
+  padding-left: 22px;
+}
+.num:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: var(--ring);
+}
+.dash {
+  color: var(--text-subtle);
+}
+
+@media (max-width: 899px) {
+  .done {
+    display: inline-block;
+    color: var(--brand);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+  }
+}
