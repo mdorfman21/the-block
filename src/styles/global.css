@@ -107,15 +107,15 @@ button {
 
 /* ---- Utilities ---- */
 .container {
-  width: 100%;
-  max-width: var(--container);
+  /* Fluid with 40px gutters, capped so it stops centering on ultrawide. On a
+     ~1920px screen this puts content ~40px from the edges, filling the page. */
+  width: min(100% - 80px, var(--container));
   margin-inline: auto;
-  padding-inline: var(--sp-6);
 }
 
 @media (max-width: 640px) {
   .container {
-    padding-inline: var(--sp-4);
+    width: min(100% - 2rem, var(--container));
   }
 }
 

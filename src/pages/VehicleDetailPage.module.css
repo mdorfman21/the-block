@@ -1,3 +1,10 @@
+/* The shell container is wide for the inventory grid; keep detail content
+   at a comfortable reading width. */
+.page {
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
 .back {
   display: inline-flex;
   align-items: center;

@@ -17,7 +17,7 @@ export default function Header() {
             <strong className="tnum">{formatNumber(vehicles.length)}</strong> vehicles
           </span>
           {yourBids > 0 && (
-            <Link to="/" className={styles.bidsChip}>
+            <Link to="/?view=my-bids" className={styles.bidsChip}>
               <span className={styles.dot} aria-hidden="true" />
               <span className="tnum">{yourBids}</span>{' '}
               {yourBids === 1 ? 'active bid' : 'active bids'}

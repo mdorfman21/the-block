@@ -42,6 +42,23 @@ export function applyFilters(list: Vehicle[], f: FilterState): Vehicle[] {
   })
 }
 
+/**
+ * Set the selected makes, pruning any selected models that no longer belong to
+ * a selected make (and clearing models entirely when no make is selected).
+ * Shared by the filter panel and the removable filter chips.
+ */
+export function withMakes(
+  filters: FilterState,
+  nextMakes: string[],
+  allVehicles: Vehicle[],
+): FilterState {
+  if (nextMakes.length === 0) return { ...filters, makes: [], models: [] }
+  const allowed = new Set(
+    allVehicles.filter((v) => nextMakes.includes(v.make)).map((v) => v.model),
+  )
+  return { ...filters, makes: nextMakes, models: filters.models.filter((m) => allowed.has(m)) }
+}
+
 export type FilterDimension =
   | 'makes'
   | 'models'

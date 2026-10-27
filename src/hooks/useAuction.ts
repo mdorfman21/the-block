@@ -32,3 +32,15 @@ export function useYourBidCount(): number {
     [map],
   )
 }
+
+/** The set of vehicle ids the current buyer has bid on (for the "my bids" view). */
+export function useMyBidVehicleIds(): Set<string> {
+  const map = useBidsSnapshot()
+  return useMemo(() => {
+    const ids = new Set<string>()
+    for (const [vehicleId, events] of Object.entries(map)) {
+      if (events.some((e) => e.bidder === ME)) ids.add(vehicleId)
+    }
+    return ids
+  }, [map])
+}

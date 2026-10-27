@@ -8,7 +8,9 @@ import {
   countActiveFilters,
   emptyFilters,
   facetCounts,
+  withMakes,
 } from '../lib/filters'
+import { vehicles as allVehicles } from '../data/vehicles'
 import styles from './FilterPanel.module.css'
 
 function toggle(arr: string[], value: string): string[] {
@@ -56,12 +58,7 @@ export default function FilterPanel({
 
   // Changing makes prunes any selected models that no longer belong.
   function setMakes(next: string[]) {
-    const allowed = new Set(source.filter((v) => next.includes(v.make)).map((v) => v.model))
-    onChange({
-      ...filters,
-      makes: next,
-      models: next.length ? filters.models.filter((m) => allowed.has(m)) : [],
-    })
+    onChange(withMakes(filters, next, allVehicles))
   }
 
   return (
