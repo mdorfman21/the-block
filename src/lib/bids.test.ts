@@ -111,4 +111,17 @@ describe('deriveAuction', () => {
     expect(deriveAuction(makeVehicle({ seedCurrentBid: 16000, reservePrice: 15000 }), [], ME).reserveMet).toBe(true)
     expect(deriveAuction(makeVehicle({ seedCurrentBid: 14000, reservePrice: 15000 }), [], ME).reserveMet).toBe(false)
   })
+
+  it('marks a lot purchased via Buy It Now (which does not count as a bid)', () => {
+    const v = makeVehicle({ seedCurrentBid: 20000, seedBidCount: 5, buyNowPrice: 30000 })
+    const events: BidEvent[] = [
+      { id: 'b1', vehicleId: v.id, amount: 20500, bidder: ME, at: 1 },
+      { id: 'bn', vehicleId: v.id, amount: 30000, bidder: ME, at: 2, kind: 'buy-now' },
+    ]
+    const a = deriveAuction(v, events, ME)
+    expect(a.purchased).toBe(true)
+    expect(a.displayPrice).toBe(30000)
+    expect(a.isHighBidder).toBe(true)
+    expect(a.bidCount).toBe(6) // seed 5 + the one real bid; Buy Now is excluded
+  })
 })

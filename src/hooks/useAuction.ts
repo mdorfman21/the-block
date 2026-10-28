@@ -44,3 +44,15 @@ export function useMyBidVehicleIds(): Set<string> {
     return ids
   }, [map])
 }
+
+/** The set of vehicle ids bought outright via Buy It Now (no longer available). */
+export function usePurchasedVehicleIds(): Set<string> {
+  const map = useBidsSnapshot()
+  return useMemo(() => {
+    const ids = new Set<string>()
+    for (const [vehicleId, events] of Object.entries(map)) {
+      if (events.some((e) => e.kind === 'buy-now')) ids.add(vehicleId)
+    }
+    return ids
+  }, [map])
+}

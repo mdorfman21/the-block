@@ -56,6 +56,8 @@ export interface AuctionView {
   isHighBidder: boolean
   /** Whether the current buyer has placed at least one bid on this lot. */
   hasLocalBids: boolean
+  /** Whether this lot was bought outright via Buy It Now. */
+  purchased: boolean
   /** `displayPrice >= reservePrice` (reserve amount itself stays hidden in the UI). */
   reserveMet: boolean
   increment: number
@@ -78,17 +80,21 @@ export function deriveAuction(
   const sorted = [...events].sort((a, b) => a.at - b.at)
   const top = sorted.length > 0 ? sorted[sorted.length - 1] : null
 
+  const purchased = sorted.some((e) => e.kind === 'buy-now')
   const currentBid = top ? top.amount : vehicle.seedCurrentBid
   const displayPrice = currentBid ?? vehicle.startingBid
   const highBidder = top ? top.bidder : null
+  // Buy Now is a purchase, not a bid — it doesn't add to the bid count.
+  const localBidCount = sorted.reduce((n, e) => (e.kind === 'buy-now' ? n : n + 1), 0)
 
   return {
     currentBid,
     displayPrice,
-    bidCount: vehicle.seedBidCount + sorted.length,
+    bidCount: vehicle.seedBidCount + localBidCount,
     highBidder,
     isHighBidder: highBidder === me,
     hasLocalBids: sorted.length > 0,
+    purchased,
     reserveMet: displayPrice >= vehicle.reservePrice,
     increment: bidIncrement(displayPrice),
     minNextBid: minNextBid(vehicle.startingBid, currentBid),

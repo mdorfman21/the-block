@@ -92,4 +92,6 @@ export interface BidEvent {
   bidder: string
   /** Epoch milliseconds. */
   at: number
+  /** `"buy-now"` marks an instant Buy It Now purchase; absent/`"bid"` is a normal bid. */
+  kind?: 'bid' | 'buy-now'
 }
