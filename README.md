@@ -26,8 +26,10 @@ Then open the printed URL (default **http://localhost:5173**).
 | `npm run dev` | Start the Vite dev server |
 | `npm run build` | Type-check (`tsc`) and build for production |
 | `npm run preview` | Preview the production build |
-| `npm test` | Run the unit tests (Vitest) |
-| `npm run typecheck` | Type-check only |
+| `npm test` | Run the unit + component tests once (Vitest) |
+| `npm run test:watch` | Run the tests in watch mode |
+| `npm run lint` | Lint the codebase with ESLint |
+| `npm run typecheck` | Type-check only (no emit) |
 
 No environment variables, no backend, no database — `npm install && npm run dev` is all it takes.
 
