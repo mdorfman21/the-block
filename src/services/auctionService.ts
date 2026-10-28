@@ -76,6 +76,9 @@ export const auctionService = {
     if (eventsFor(vehicleId).some((e) => e.kind === 'buy-now')) {
       throw new BidError('This lot has already been purchased.')
     }
+    if (deriveAuction(vehicle, eventsFor(vehicleId), ME).displayPrice >= vehicle.buyNowPrice) {
+      throw new BidError('Bidding has passed the Buy It Now price.')
+    }
 
     await delay(320)
     const event: BidEvent = {

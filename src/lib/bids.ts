@@ -56,8 +56,6 @@ export interface AuctionView {
   isHighBidder: boolean
   /** You've bid, but a later bid (a rival) is now the high bid. */
   outbid: boolean
-  /** Whether the current buyer has placed at least one bid on this lot. */
-  hasLocalBids: boolean
   /** Whether this lot was bought outright via Buy It Now. */
   purchased: boolean
   /** `displayPrice >= reservePrice` (reserve amount itself stays hidden in the UI). */
@@ -66,8 +64,6 @@ export interface AuctionView {
   minNextBid: number
   /** The current buyer's own bids, newest first. */
   yourBids: BidEvent[]
-  /** All locally-placed bids, newest first. */
-  localHistory: BidEvent[]
 }
 
 /**
@@ -98,12 +94,10 @@ export function deriveAuction(
     highBidder,
     isHighBidder,
     outbid: myBids.length > 0 && !isHighBidder && !purchased,
-    hasLocalBids: sorted.length > 0,
     purchased,
     reserveMet: displayPrice >= vehicle.reservePrice,
     increment: bidIncrement(displayPrice),
     minNextBid: minNextBid(vehicle.startingBid, currentBid),
     yourBids: [...myBids].reverse(),
-    localHistory: [...sorted].reverse(),
   }
 }

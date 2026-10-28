@@ -5,7 +5,7 @@ import { useCountdown } from '../hooks/useCountdown'
 import { auctionService, BidError } from '../services/auctionService'
 import { validateBid } from '../lib/bids'
 import { auctionEndMs, formatCountdown, timeLeftTone } from '../lib/auction'
-import { useToast } from './Toast/ToastProvider'
+import { useToast } from './Toast/ToastContext'
 import { formatClock, formatCurrency, formatEndsAt } from '../lib/format'
 import { ClockIcon } from './Countdown'
 import styles from './BidPanel.module.css'
@@ -30,6 +30,7 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
   const toast = useToast()
   const min = auction.minNextBid
   const inc = auction.increment
+  const buyNowPrice = vehicle.buyNowPrice
 
   const endsAt = auctionEndMs(vehicle.id)
   const timeLeft = useCountdown(endsAt, 1000)
@@ -66,15 +67,12 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
   }
 
   async function buyNow() {
-    if (vehicle.buyNowPrice == null) return
+    if (buyNowPrice == null) return
     setError(null)
     setPending(true)
     try {
       await auctionService.buyNow(vehicle.id)
-      toast.show(
-        `You bought this ${vehicle.name} for ${formatCurrency(vehicle.buyNowPrice)}.`,
-        'success',
-      )
+      toast.show(`You bought this ${vehicle.name} for ${formatCurrency(buyNowPrice)}.`, 'success')
     } catch (e) {
       const msg =
         e instanceof BidError ? e.message : 'Could not complete the purchase. Please try again.'
@@ -86,6 +84,15 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
   }
 
   const quicks = [min, min + inc, min + inc * 2]
+
+  // Urgency styling for the countdown (red < 1h, amber < 24h).
+  const countdownClass = ended
+    ? styles.cdEnded
+    : urgency === 'bad'
+      ? styles.cdUrgent
+      : urgency === 'warn'
+        ? styles.cdSoon
+        : ''
 
   // ---- Bought outright via Buy It Now ----
   if (auction.purchased) {
@@ -166,17 +173,7 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
         </span>
       </div>
 
-      <div
-        className={`${styles.countdown} ${
-          ended
-            ? styles.cdEnded
-            : urgency === 'bad'
-              ? styles.cdUrgent
-              : urgency === 'warn'
-                ? styles.cdSoon
-                : ''
-        }`}
-      >
+      <div className={`${styles.countdown} ${countdownClass}`}>
         <ClockIcon className={styles.clockIcon} />
         {ended ? (
           <strong>Auction ended</strong>
@@ -263,7 +260,7 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
             </button>
           </div>
 
-          {vehicle.buyNowPrice != null && (
+          {buyNowPrice != null && auction.displayPrice < buyNowPrice && (
             <>
               <div className={styles.or}>
                 <span>or</span>
@@ -274,7 +271,7 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
                 onClick={buyNow}
                 disabled={pending}
               >
-                Buy it now · {formatCurrency(vehicle.buyNowPrice)}
+                Buy it now · {formatCurrency(buyNowPrice)}
               </button>
             </>
           )}

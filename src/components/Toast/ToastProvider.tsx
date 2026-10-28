@@ -1,31 +1,11 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react'
+import { useCallback, useMemo, useState, type ReactNode } from 'react'
+import { ToastContext, type ToastApi, type ToastType } from './ToastContext'
 import styles from './Toast.module.css'
-
-type ToastType = 'success' | 'error' | 'info'
 
 interface Toast {
   id: string
   message: string
   type: ToastType
-}
-
-interface ToastApi {
-  show: (message: string, type?: ToastType) => void
-}
-
-const ToastContext = createContext<ToastApi | null>(null)
-
-export function useToast(): ToastApi {
-  const ctx = useContext(ToastContext)
-  if (!ctx) throw new Error('useToast must be used within <ToastProvider>')
-  return ctx
 }
 
 const AUTO_DISMISS_MS = 3600
@@ -60,12 +40,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 function ToastIcon({ type }: { type: ToastType }) {
   return (
-    <svg
-      className={styles.icon}
-      viewBox="0 0 20 20"
-      aria-hidden="true"
-      focusable="false"
-    >
+    <svg className={styles.icon} viewBox="0 0 20 20" aria-hidden="true" focusable="false">
       <circle cx="10" cy="10" r="9" className={styles.iconBg} />
       {type === 'success' && (
         <path
@@ -78,22 +53,10 @@ function ToastIcon({ type }: { type: ToastType }) {
         />
       )}
       {type === 'error' && (
-        <path
-          d="M10 5.5v5M10 13.5v.5"
-          fill="none"
-          stroke="#fff"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M10 5.5v5M10 13.5v.5" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
       )}
       {type === 'info' && (
-        <path
-          d="M10 9v5M10 6v.5"
-          fill="none"
-          stroke="#fff"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M10 9v5M10 6v.5" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
       )}
     </svg>
   )

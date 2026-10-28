@@ -1,6 +1,6 @@
 import { auctionService } from '../services/auctionService'
 import { useYourBidCount } from '../hooks/useAuction'
-import { useToast } from './Toast/ToastProvider'
+import { useToast } from './Toast/ToastContext'
 import styles from './Footer.module.css'
 
 export default function Footer() {
