@@ -14,11 +14,12 @@ v1 shipped the README's **Minimum Bar**, polished and OPENLANE-branded; the buil
 - **Vehicle detail** — photo gallery, full specs, labeled condition meter, condition report, damage notes, title status, selling dealer
 - **Bidding** — tiered increments, validation, persisted updated state, your bid history, "you're the high bidder"
 - **Live countdowns** — per-lot auction end normalized to "now", card badge + bid-panel timer with urgency tones; **bidding closes when a lot ends**
-- **Buy It Now** — instant purchase on the ~39 eligible lots → "You bought this lot", card *Purchased* badge, excluded from the Buy-It-Now filter
+- **Buy It Now** — instant purchase on the ~39 eligible lots (withdrawn once bidding passes the price) → "You bought this lot", card *Purchased* badge, excluded from the Buy-It-Now filter
 - **Watchlist** — save/favorite (heart on cards, labeled button on detail), persisted, header "saved" pill
 - **Scoped views** — `?view=my-bids` and `?view=watchlist` with a clean reset and tailored empty states
 - **Rival outbid demo script** — `theBlock.outbidMe()` places a rival bid above yours through the service seam, flipping you to a visible **Outbid** state (see below)
 - **Foundations** — bids are an append-only **event log** (`currentBid` / `bidCount` / `isHighBidder` / `purchased` / `outbid` are *derived*); shared reactive `createStore` + `loadJSON`/`saveJSON`; auction and watchlist both ride it
+- **Engineering & quality** — **65 tests** (Vitest unit + React Testing Library component tests); **ESLint** + a **GitHub Actions CI** (lint → typecheck → test → build); an app-level **error boundary**; demo helpers gated to dev builds; shared `capitalize` / `titleStatusMeta` / storage / store utilities
 
 ---
 
