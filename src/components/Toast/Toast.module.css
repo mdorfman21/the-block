@@ -1,7 +1,7 @@
 .viewport {
   position: fixed;
   left: 50%;
-  bottom: var(--sp-6);
+  top: calc(var(--header-h) + var(--sp-3));
   transform: translateX(-50%);
   z-index: var(--z-toast);
   display: flex;
@@ -61,7 +61,7 @@
 @keyframes toastIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;

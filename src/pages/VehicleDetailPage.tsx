@@ -4,29 +4,26 @@ import Gallery from '../components/Gallery'
 import BidPanel from '../components/BidPanel'
 import Badge from '../components/Badge'
 import ConditionGrade from '../components/ConditionGrade'
+import WatchButton from '../components/WatchButton'
 import NotFoundPage from './NotFoundPage'
 import { formatOdometer } from '../lib/format'
-import type { Tone } from '../types'
+import { capitalize } from '../lib/text'
+import { titleStatusMeta } from '../lib/titleStatus'
 import styles from './VehicleDetailPage.module.css'
-
-const TITLE_TONE: Record<string, Tone> = { clean: 'ok', salvage: 'bad', rebuilt: 'warn' }
-
-function cap(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1)
-}
 
 export default function VehicleDetailPage() {
   const { id } = useParams()
   const vehicle = id ? getVehicle(id) : undefined
   if (!vehicle) return <NotFoundPage />
 
+  const titleMeta = titleStatusMeta(vehicle.titleStatus)
   const specs: [string, string][] = [
     ['Odometer', formatOdometer(vehicle.odometerKm)],
     ['Engine', vehicle.engine],
-    ['Transmission', cap(vehicle.transmission)],
+    ['Transmission', capitalize(vehicle.transmission)],
     ['Drivetrain', vehicle.drivetrain],
-    ['Fuel type', cap(vehicle.fuelType)],
-    ['Body style', cap(vehicle.bodyStyle)],
+    ['Fuel type', capitalize(vehicle.fuelType)],
+    ['Body style', capitalize(vehicle.bodyStyle)],
     ['Exterior', vehicle.exteriorColor],
     ['Interior', vehicle.interiorColor],
     ['Year', String(vehicle.year)],
@@ -47,9 +44,12 @@ export default function VehicleDetailPage() {
             {vehicle.lot}
           </p>
         </div>
-        <Badge tone={TITLE_TONE[vehicle.titleStatus]} dot>
-          <span className={styles.cap}>{vehicle.titleStatus}</span> title
-        </Badge>
+        <div className={styles.titleActions}>
+          <Badge tone={titleMeta.tone} dot>
+            {titleMeta.label}
+          </Badge>
+          <WatchButton vehicleId={vehicle.id} variant="labeled" />
+        </div>
       </div>
 
       <div className={styles.layout}>

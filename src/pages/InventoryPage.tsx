@@ -11,7 +11,8 @@ import {
 } from '../lib/filters'
 import { SORT_OPTIONS, sortVehicles, type SortKey } from '../lib/sort'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
-import { useMyBidVehicleIds } from '../hooks/useAuction'
+import { useMyBidVehicleIds, usePurchasedVehicleIds } from '../hooks/useAuction'
+import { useWatchlistIds } from '../hooks/useWatchlist'
 import VehicleCard from '../components/VehicleCard'
 import SearchBar from '../components/SearchBar'
 import FilterPanel from '../components/FilterPanel'
@@ -25,36 +26,55 @@ export default function InventoryPage() {
   const [query, setQuery] = useState('')
   const debounced = useDebouncedValue(query, 180)
   const [filters, setFilters] = useState<FilterState>(emptyFilters)
-  const [sort, setSort] = useState<SortKey>('recommended')
+  const [sort, setSort] = useState<SortKey>('featured')
   const [visible, setVisible] = useState(PAGE_SIZE)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const myBidsView = searchParams.get('view') === 'my-bids'
+  // Scoped views: ?view=my-bids | watchlist. Null is the full inventory.
+  const view = searchParams.get('view')
   const myBidIds = useMyBidVehicleIds()
+  const purchasedIds = usePurchasedVehicleIds()
+  const watchedIds = useWatchlistIds()
 
   const bounds = useMemo(() => deriveBounds(vehicles), [])
-  const baseInventory = useMemo(
-    () => (myBidsView ? vehicles.filter((v) => myBidIds.has(v.id)) : vehicles),
-    [myBidsView, myBidIds],
-  )
+  const baseInventory = useMemo(() => {
+    if (view === 'my-bids') return vehicles.filter((v) => myBidIds.has(v.id))
+    if (view === 'watchlist') return vehicles.filter((v) => watchedIds.has(v.id))
+    return vehicles
+  }, [view, myBidIds, watchedIds])
+
   const searchBase = useMemo(
     () => searchVehicles(baseInventory, debounced),
     [baseInventory, debounced],
   )
-  const filtered = useMemo(() => applyFilters(searchBase, filters), [searchBase, filters])
+  const filtered = useMemo(() => {
+    const result = applyFilters(searchBase, filters)
+    // A lot you've already bought is no longer "available to buy now".
+    return filters.buyNowOnly ? result.filter((v) => !purchasedIds.has(v.id)) : result
+  }, [searchBase, filters, purchasedIds])
   const sorted = useMemo(() => sortVehicles(filtered, sort), [filtered, sort])
   const activeCount = countActiveFilters(filters)
+  // "Featured" is the dataset's default order — meaningless inside a scoped view.
+  const sortOptions = view ? SORT_OPTIONS.filter((o) => o.value !== 'featured') : SORT_OPTIONS
 
   // Reset the "show more" window whenever what we're showing changes.
   useEffect(() => {
     setVisible(PAGE_SIZE)
-  }, [debounced, filters, sort, myBidsView])
+  }, [debounced, filters, sort, view])
+
+  // Entering/leaving a scoped view starts clean — don't carry over stale filters,
+  // search, or sort. Scoped views default to "ending soonest" (Featured is hidden).
+  useEffect(() => {
+    setFilters(emptyFilters)
+    setQuery('')
+    setSort(view ? 'ending-soon' : 'featured')
+  }, [view])
 
   const shown = sorted.slice(0, visible)
   const hasMore = visible < sorted.length
 
-  function exitMyBids() {
+  function exitView() {
     const next = new URLSearchParams(searchParams)
     next.delete('view')
     setSearchParams(next, { replace: true })
@@ -78,6 +98,7 @@ export default function InventoryPage() {
             filters={filters}
             onChange={setFilters}
             bounds={bounds}
+            purchasedIds={purchasedIds}
             onClose={() => setFiltersOpen(false)}
           />
         </aside>
@@ -87,12 +108,20 @@ export default function InventoryPage() {
             <SearchBar value={query} onChange={setQuery} />
           </div>
 
-          {myBidsView && (
-            <div className={styles.myBidsBanner}>
+          {view && (
+            <div className={styles.viewBanner}>
               <span>
-                Showing lots <strong>you&rsquo;ve bid on</strong>
+                {view === 'my-bids' ? (
+                  <>
+                    Showing lots <strong>you&rsquo;ve bid on</strong>
+                  </>
+                ) : (
+                  <>
+                    Showing your <strong>saved vehicles</strong>
+                  </>
+                )}
               </span>
-              <button type="button" className={styles.showAll} onClick={exitMyBids}>
+              <button type="button" className={styles.showAll} onClick={exitView}>
                 Show all inventory
               </button>
             </div>
@@ -120,7 +149,7 @@ export default function InventoryPage() {
                   value={sort}
                   onChange={(e) => setSort(e.target.value as SortKey)}
                 >
-                  {SORT_OPTIONS.map((o) => (
+                  {sortOptions.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
                     </option>
@@ -159,13 +188,23 @@ export default function InventoryPage() {
             </>
           ) : (
             <div className={styles.empty}>
-              {myBidsView ? (
+              {view === 'my-bids' ? (
                 <>
                   <p className={styles.emptyTitle}>You haven&rsquo;t bid on anything yet.</p>
                   <p className={styles.emptySub}>
                     Place a bid on a vehicle and it&rsquo;ll show up here.
                   </p>
-                  <button type="button" className={styles.emptyBtn} onClick={exitMyBids}>
+                  <button type="button" className={styles.emptyBtn} onClick={exitView}>
+                    Browse inventory
+                  </button>
+                </>
+              ) : view === 'watchlist' ? (
+                <>
+                  <p className={styles.emptyTitle}>You haven&rsquo;t saved any vehicles yet.</p>
+                  <p className={styles.emptySub}>
+                    Tap the heart on a vehicle to add it to your watchlist.
+                  </p>
+                  <button type="button" className={styles.emptyBtn} onClick={exitView}>
                     Browse inventory
                   </button>
                 </>

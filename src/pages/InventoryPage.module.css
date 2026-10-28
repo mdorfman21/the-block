@@ -65,7 +65,7 @@
   margin-bottom: var(--sp-4);
 }
 
-.myBidsBanner {
+.viewBanner {
   display: flex;
   align-items: center;
   justify-content: space-between;

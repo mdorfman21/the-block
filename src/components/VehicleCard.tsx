@@ -1,38 +1,47 @@
 import { Link } from 'react-router-dom'
-import type { Tone, Vehicle } from '../types'
+import type { Vehicle } from '../types'
 import VehiclePhoto from './VehiclePhoto'
 import Badge from './Badge'
 import ConditionGrade from './ConditionGrade'
 import Countdown from './Countdown'
+import WatchButton from './WatchButton'
 import { useAuction } from '../hooks/useAuction'
 import { formatCurrency, formatOdometer } from '../lib/format'
 import { auctionEndMs } from '../lib/auction'
 import { toneColorVar } from '../lib/condition'
+import { titleStatusMeta } from '../lib/titleStatus'
 import styles from './VehicleCard.module.css'
-
-const TITLE_META: Record<string, { tone: Tone; label: string }> = {
-  clean: { tone: 'ok', label: 'Clean title' },
-  salvage: { tone: 'bad', label: 'Salvage title' },
-  rebuilt: { tone: 'warn', label: 'Rebuilt title' },
-}
 
 export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const auction = useAuction(vehicle)
-  const title = TITLE_META[vehicle.titleStatus] ?? TITLE_META.clean
+  const title = titleStatusMeta(vehicle.titleStatus)
 
   return (
     <Link to={`/vehicle/${vehicle.id}`} className={styles.card}>
       <div className={styles.photoWrap}>
         <VehiclePhoto vehicle={vehicle} />
-        <div className={styles.countdown}>
-          <Countdown target={auctionEndMs(vehicle.id)} variant="badge" tickMs={60000} />
+        {!auction.purchased && (
+          <div className={styles.countdown}>
+            <Countdown target={auctionEndMs(vehicle.id)} variant="badge" tickMs={60000} />
+          </div>
+        )}
+        <div className={styles.watch}>
+          <WatchButton vehicleId={vehicle.id} stopNavigation />
         </div>
-        {auction.isHighBidder && (
-          <div className={styles.highTag}>
+        {auction.purchased ? (
+          <div className={styles.statusTag}>
             <Badge tone="ok" dot>
-              You&rsquo;re the high bidder
+              Purchased
             </Badge>
           </div>
+        ) : (
+          auction.isHighBidder && (
+            <div className={styles.statusTag}>
+              <Badge tone="ok" dot>
+                You&rsquo;re the high bidder
+              </Badge>
+            </div>
+          )
         )}
       </div>
 

@@ -47,6 +47,29 @@
   background: var(--brand-100);
 }
 
+.savedChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.savedChip:hover {
+  text-decoration: none;
+  background: var(--border);
+}
+.savedHeart {
+  width: 14px;
+  height: 14px;
+  fill: var(--bad);
+}
+
 .dot {
   width: 7px;
   height: 7px;

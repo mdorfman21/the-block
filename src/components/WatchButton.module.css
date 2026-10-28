@@ -1,0 +1,46 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  transition: color var(--t), background var(--t), border-color var(--t);
+}
+.heart {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+/* Icon variant — a round button over a card photo. */
+.iconBtn {
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-sm);
+}
+.iconBtn:hover {
+  color: var(--bad);
+}
+.iconBtn.active {
+  color: var(--bad);
+}
+
+/* Labeled variant — an outline button on the detail page. */
+.labeledBtn {
+  padding: 9px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.labeledBtn:hover {
+  border-color: var(--bad);
+  color: var(--bad);
+}
+.labeledBtn.active {
+  border-color: var(--bad);
+  color: var(--bad);
+}
