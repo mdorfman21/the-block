@@ -1,17 +1,14 @@
 import type { FilterState } from '../lib/filters'
 import { emptyFilters, withMakes } from '../lib/filters'
 import { vehicles } from '../data/vehicles'
-import { formatCurrency } from '../lib/format'
+import { formatCurrency, formatNumber } from '../lib/format'
+import { capitalize } from '../lib/text'
 import styles from './FilterChips.module.css'
 
 interface Chip {
   key: string
   label: string
   next: FilterState
-}
-
-function cap(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
 function priceLabel(f: FilterState): string {
@@ -26,6 +23,15 @@ function yearLabel(f: FilterState): string {
   if (f.yearMin != null && f.yearMax != null) return `${f.yearMin} – ${f.yearMax}`
   if (f.yearMin != null) return `${f.yearMin} & newer`
   return `${f.yearMax} & older`
+}
+
+function odometerLabel(f: FilterState): string {
+  const km = (n: number) => `${formatNumber(n)} km`
+  if (f.odometerMin != null && f.odometerMax != null) {
+    return `${formatNumber(f.odometerMin)} – ${km(f.odometerMax)}`
+  }
+  if (f.odometerMin != null) return `Over ${km(f.odometerMin)}`
+  return `Under ${km(f.odometerMax as number)}`
 }
 
 /** Removable chips for each active filter + a clear-all. Renders nothing when no filter is set. */
@@ -54,14 +60,14 @@ export default function FilterChips({
   for (const b of filters.bodyStyles) {
     chips.push({
       key: `body:${b}`,
-      label: cap(b),
+      label: capitalize(b),
       next: { ...filters, bodyStyles: filters.bodyStyles.filter((x) => x !== b) },
     })
   }
   for (const t of filters.titleStatuses) {
     chips.push({
       key: `title:${t}`,
-      label: `${cap(t)} title`,
+      label: `${capitalize(t)} title`,
       next: { ...filters, titleStatuses: filters.titleStatuses.filter((x) => x !== t) },
     })
   }
@@ -70,6 +76,16 @@ export default function FilterChips({
   }
   if (filters.yearMin != null || filters.yearMax != null) {
     chips.push({ key: 'year', label: yearLabel(filters), next: { ...filters, yearMin: null, yearMax: null } })
+  }
+  if (filters.odometerMin != null || filters.odometerMax != null) {
+    chips.push({
+      key: 'odometer',
+      label: odometerLabel(filters),
+      next: { ...filters, odometerMin: null, odometerMax: null },
+    })
+  }
+  if (filters.buyNowOnly) {
+    chips.push({ key: 'buyNow', label: 'Buy It Now', next: { ...filters, buyNowOnly: false } })
   }
 
   if (chips.length === 0) return null

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { sortVehicles } from './sort'
+import { auctionEndMs } from './auction'
 import { makeVehicle } from '../test/fixtures'
 
 const list = [
@@ -9,8 +10,8 @@ const list = [
 ]
 
 describe('sortVehicles', () => {
-  it('preserves the original order (same reference) for "recommended"', () => {
-    expect(sortVehicles(list, 'recommended')).toBe(list)
+  it('preserves the original order (same reference) for "featured"', () => {
+    expect(sortVehicles(list, 'featured')).toBe(list)
   })
 
   it('sorts by price (current-or-starting bid)', () => {
@@ -28,6 +29,15 @@ describe('sortVehicles', () => {
     expect(sortVehicles(list, 'odometer-asc').map((v) => v.odometerKm)).toEqual([10000, 50000, 90000])
     expect(sortVehicles(list, 'bids-desc').map((v) => v.seedBidCount)).toEqual([12, 5, 0])
     expect(sortVehicles(list, 'condition-desc').map((v) => v.conditionGrade)).toEqual([4.5, 3.0, 2.0])
+  })
+
+  it('sorts by worst condition', () => {
+    expect(sortVehicles(list, 'condition-asc').map((v) => v.conditionGrade)).toEqual([2.0, 3.0, 4.5])
+  })
+
+  it('sorts by soonest ending (ascending auction end)', () => {
+    const ends = sortVehicles(list, 'ending-soon').map((v) => auctionEndMs(v.id))
+    expect(ends).toEqual([...ends].sort((a, b) => a - b))
   })
 
   it('does not mutate the input list', () => {

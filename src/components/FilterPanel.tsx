@@ -28,6 +28,7 @@ export default function FilterPanel({
   filters,
   onChange,
   bounds,
+  purchasedIds,
   onClose,
 }: {
   /** Search-filtered list, used to derive facet options and counts. */
@@ -35,6 +36,8 @@ export default function FilterPanel({
   filters: FilterState
   onChange: (next: FilterState) => void
   bounds: Bounds
+  /** Lots bought via Buy It Now — excluded from the "available now" count. */
+  purchasedIds: Set<string>
   onClose?: () => void
 }) {
   // Each facet counts the list filtered by every OTHER dimension, so counts
@@ -55,6 +58,9 @@ export default function FilterPanel({
       ? facetCounts(applyFiltersExcept(source, filters, 'models'), (v) => v.model)
       : []
   const active = countActiveFilters(filters)
+  const buyNowCount = applyFiltersExcept(source, filters, 'buyNow').filter(
+    (v) => v.buyNowPrice != null && !purchasedIds.has(v.id),
+  ).length
 
   // Changing makes prunes any selected models that no longer belong.
   function setMakes(next: string[]) {
@@ -135,6 +141,18 @@ export default function FilterPanel({
         />
       </Section>
 
+      <Section title="Odometer (km)">
+        <RangeRow
+          minValue={filters.odometerMin}
+          maxValue={filters.odometerMax}
+          minPlaceholder={bounds.odometerMin}
+          maxPlaceholder={bounds.odometerMax}
+          step={5000}
+          onMin={(n) => onChange({ ...filters, odometerMin: n })}
+          onMax={(n) => onChange({ ...filters, odometerMax: n })}
+        />
+      </Section>
+
       <Section title="Title status">
         <CheckList
           facets={titleFacets}
@@ -142,6 +160,18 @@ export default function FilterPanel({
           onToggle={(v) => onChange({ ...filters, titleStatuses: toggle(filters.titleStatuses, v) })}
           capitalize
         />
+      </Section>
+
+      <Section title="Buy It Now">
+        <label className={styles.check}>
+          <input
+            type="checkbox"
+            checked={filters.buyNowOnly}
+            onChange={() => onChange({ ...filters, buyNowOnly: !filters.buyNowOnly })}
+          />
+          <span className={styles.checkLabel}>Available now</span>
+          <span className={`${styles.count} tnum`}>{buyNowCount}</span>
+        </label>
       </Section>
     </div>
   )

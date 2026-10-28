@@ -9,6 +9,9 @@ export interface FilterState {
   yearMax: number | null
   priceMin: number | null
   priceMax: number | null
+  odometerMin: number | null
+  odometerMax: number | null
+  buyNowOnly: boolean
 }
 
 export const emptyFilters: FilterState = {
@@ -20,6 +23,9 @@ export const emptyFilters: FilterState = {
   yearMax: null,
   priceMin: null,
   priceMax: null,
+  odometerMin: null,
+  odometerMax: null,
+  buyNowOnly: false,
 }
 
 /** The price a buyer filters on: the leading bid if any, else the starting bid. */
@@ -38,6 +44,9 @@ export function applyFilters(list: Vehicle[], f: FilterState): Vehicle[] {
     const price = vehiclePrice(v)
     if (f.priceMin != null && price < f.priceMin) return false
     if (f.priceMax != null && price > f.priceMax) return false
+    if (f.odometerMin != null && v.odometerKm < f.odometerMin) return false
+    if (f.odometerMax != null && v.odometerKm > f.odometerMax) return false
+    if (f.buyNowOnly && v.buyNowPrice == null) return false
     return true
   })
 }
@@ -66,6 +75,8 @@ export type FilterDimension =
   | 'titleStatuses'
   | 'year'
   | 'price'
+  | 'odometer'
+  | 'buyNow'
 
 /**
  * Apply every active filter EXCEPT one dimension. Used to compute faceted counts
@@ -99,6 +110,11 @@ export function applyFiltersExcept(
       if (f.priceMin != null && price < f.priceMin) return false
       if (f.priceMax != null && price > f.priceMax) return false
     }
+    if (!skip.includes('odometer')) {
+      if (f.odometerMin != null && v.odometerKm < f.odometerMin) return false
+      if (f.odometerMax != null && v.odometerKm > f.odometerMax) return false
+    }
+    if (!skip.includes('buyNow') && f.buyNowOnly && v.buyNowPrice == null) return false
     return true
   })
 }
@@ -112,7 +128,10 @@ export function countActiveFilters(f: FilterState): number {
     (f.yearMin != null ? 1 : 0) +
     (f.yearMax != null ? 1 : 0) +
     (f.priceMin != null ? 1 : 0) +
-    (f.priceMax != null ? 1 : 0)
+    (f.priceMax != null ? 1 : 0) +
+    (f.odometerMin != null ? 1 : 0) +
+    (f.odometerMax != null ? 1 : 0) +
+    (f.buyNowOnly ? 1 : 0)
   )
 }
 
@@ -138,6 +157,8 @@ export interface Bounds {
   yearMax: number
   priceMin: number
   priceMax: number
+  odometerMin: number
+  odometerMax: number
 }
 
 export function deriveBounds(list: Vehicle[]): Bounds {
@@ -145,12 +166,16 @@ export function deriveBounds(list: Vehicle[]): Bounds {
   let yearMax = -Infinity
   let priceMin = Infinity
   let priceMax = -Infinity
+  let odometerMin = Infinity
+  let odometerMax = -Infinity
   for (const v of list) {
     yearMin = Math.min(yearMin, v.year)
     yearMax = Math.max(yearMax, v.year)
     const p = vehiclePrice(v)
     priceMin = Math.min(priceMin, p)
     priceMax = Math.max(priceMax, p)
+    odometerMin = Math.min(odometerMin, v.odometerKm)
+    odometerMax = Math.max(odometerMax, v.odometerKm)
   }
-  return { yearMin, yearMax, priceMin, priceMax }
+  return { yearMin, yearMax, priceMin, priceMax, odometerMin, odometerMax }
 }

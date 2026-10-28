@@ -12,9 +12,9 @@ import {
 import { makeVehicle } from '../test/fixtures'
 
 const list = [
-  makeVehicle({ make: 'Ford', model: 'Explorer', bodyStyle: 'SUV', year: 2020, titleStatus: 'clean', seedCurrentBid: 20000, startingBid: 18000 }),
-  makeVehicle({ make: 'Ford', model: 'F-150', bodyStyle: 'truck', year: 2018, titleStatus: 'salvage', seedCurrentBid: null, startingBid: 15000 }),
-  makeVehicle({ make: 'Toyota', model: 'Camry', bodyStyle: 'sedan', year: 2022, titleStatus: 'clean', seedCurrentBid: 25000, startingBid: 20000 }),
+  makeVehicle({ make: 'Ford', model: 'Explorer', bodyStyle: 'SUV', year: 2020, titleStatus: 'clean', seedCurrentBid: 20000, startingBid: 18000, odometerKm: 50000 }),
+  makeVehicle({ make: 'Ford', model: 'F-150', bodyStyle: 'truck', year: 2018, titleStatus: 'salvage', seedCurrentBid: null, startingBid: 15000, odometerKm: 80000 }),
+  makeVehicle({ make: 'Toyota', model: 'Camry', bodyStyle: 'sedan', year: 2022, titleStatus: 'clean', seedCurrentBid: 25000, startingBid: 20000, odometerKm: 30000 }),
 ]
 
 describe('applyFilters', () => {
@@ -40,6 +40,22 @@ describe('applyFilters', () => {
     // effective prices: 20000, 15000 (starting), 25000
     expect(applyFilters(list, { ...emptyFilters, priceMin: 20000 })).toHaveLength(2)
     expect(applyFilters(list, { ...emptyFilters, priceMax: 16000 })).toHaveLength(1)
+  })
+
+  it('filters by odometer range', () => {
+    // odometers: 50000, 80000, 30000
+    expect(applyFilters(list, { ...emptyFilters, odometerMax: 60000 })).toHaveLength(2)
+    expect(applyFilters(list, { ...emptyFilters, odometerMin: 60000 })).toHaveLength(1)
+  })
+
+  it('filters to Buy It Now lots', () => {
+    const lots = [
+      makeVehicle({ buyNowPrice: 30000 }),
+      makeVehicle({ buyNowPrice: null }),
+      makeVehicle({ buyNowPrice: 25000 }),
+    ]
+    expect(applyFilters(lots, { ...emptyFilters, buyNowOnly: true })).toHaveLength(2)
+    expect(applyFilters(lots, { ...emptyFilters, buyNowOnly: false })).toHaveLength(3)
   })
 
   it('combines filters with AND', () => {
@@ -81,7 +97,14 @@ describe('facetCounts', () => {
 describe('deriveBounds', () => {
   it('finds the year and price extents', () => {
     const b = deriveBounds(list)
-    expect(b).toEqual({ yearMin: 2018, yearMax: 2022, priceMin: 15000, priceMax: 25000 })
+    expect(b).toEqual({
+      yearMin: 2018,
+      yearMax: 2022,
+      priceMin: 15000,
+      priceMax: 25000,
+      odometerMin: 30000,
+      odometerMax: 80000,
+    })
   })
 })
 
