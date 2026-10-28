@@ -5,3 +5,6 @@ dist/
 .DS_Store
 *.log
 *.bak
+
+# Personal walkthrough prep (not part of the submission)
+WALKTHROUGH-NOTES.md
