@@ -7,6 +7,9 @@ import '@fontsource/poppins/latin-600.css'
 import '@fontsource/poppins/latin-700.css'
 import './styles/global.css'
 import App from './App'
+import { installDemoTools } from './dev/rivals'
+
+installDemoTools()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

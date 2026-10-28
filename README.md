@@ -41,6 +41,10 @@ The brief's **Minimum Bar**, polished first, then extended:
 - **Bidding** — tiered minimum-increment logic, a bid input with steppers and quick-bid chips, validation, a "you're the high bidder" state, and your bid history. **Bids persist across refresh** (localStorage) and update everywhere reactively (cards, header badge, detail panel).
 - **OPENLANE branding** — the real palette and typeface, pulled from the live OPENLANE Canada marketplace (see *Notable decisions*).
 
+Beyond the minimum bar, the build also adds live auction **countdowns**, **Buy It Now**, a **watchlist**, odometer/buy-now filters, more sort options, and scoped `my-bids` / `watchlist` views. See **[ROADMAP.md](ROADMAP.md)** for the full shipped list.
+
+> **Demo — the outbid flow:** the prototype is single-user, so you're always the high bidder. To exercise the outbid → re-bid loop, bid on a lot, then run **`theBlock.outbidMe()`** in the browser console — a rival outbids you and the UI flips to an **Outbid** state.
+
 ## Stack
 
 - **Frontend:** React 19 + Vite + TypeScript, React Router

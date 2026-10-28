@@ -78,6 +78,7 @@ describe('deriveAuction', () => {
     expect(a.currentBid).toBe(20500)
     expect(a.bidCount).toBe(6)
     expect(a.isHighBidder).toBe(true)
+    expect(a.outbid).toBe(false)
     expect(a.yourBids).toHaveLength(1)
   })
 
@@ -94,6 +95,7 @@ describe('deriveAuction', () => {
     expect(a.currentBid).toBe(21000)
     expect(a.highBidder).toBe('rival-1')
     expect(a.isHighBidder).toBe(false)
+    expect(a.outbid).toBe(true)
     expect(a.bidCount).toBe(7)
     expect(a.yourBids).toHaveLength(1)
   })

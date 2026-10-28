@@ -39,6 +39,24 @@
   font-weight: 700;
 }
 
+.outbidBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--bad-bg);
+  color: var(--bad-fg);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+.alert {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--bad);
+}
+
 .priceBlock {
   display: flex;
   flex-direction: column;

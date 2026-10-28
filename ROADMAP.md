@@ -1,61 +1,50 @@
 # The Block — Feature Roadmap
 
-v1 ships the README's **Minimum Bar**, polished and OPENLANE-branded. This document captures everything intentionally deferred, phased by buyer value and effort. The ordering optimizes for the evaluation criteria (product thinking, craft, judgment) and for how real auction buyers actually behave.
+v1 shipped the README's **Minimum Bar**, polished and OPENLANE-branded; the build has since grown well past it. This document tracks what's shipped and what's next.
 
-> **Scoping philosophy:** get the core experience genuinely good before adding surface area. Each phase is independently shippable.
-
----
-
-## v1 — Polished Minimum Bar *(current build)*
-
-- Browse inventory — branded, responsive card grid
-- Search — free-text across make / model / trim / year / location / lot
-- Vehicle detail — specs, condition grade, condition report, damage notes, title status, selling dealership, location, photos
-- Bid flow with **persisted, updated visible state** (localStorage, behind an async service seam)
-- Usable on desktop **and** mobile
-- Clone-and-run README
-
-**Foundations deliberately baked in for what's next:** bids are stored as an append-only **event log**; `currentBid` / `bidCount` / `isHighBidder` are *derived* from it; all mutations flow through one reactive service module. (See *Architecture note* below for why this makes Phase 3 cheap.)
+> **Scoping philosophy:** get the core experience genuinely good before adding surface area. Each item is independently shippable, and everything rides one reactive service seam (see *Architecture note*).
 
 ---
 
-## Phase 2 — Navigate the floor *(product thinking)*
+## Shipped
 
-200 lots need wayfinding; this is the biggest single jump in buyer usefulness.
+- **Browse & search** — branded, responsive card grid; free-text search across make / model / trim / year / location / lot
+- **Faceted filters** — make, model (dependent on make), body style, title status, and **price / year / odometer** ranges, plus a **Buy It Now available** toggle; cross-filtering counts, removable chips, result counts, tailored empty states
+- **Sort** — Featured, Ending soonest, price ↑/↓, year, mileage, most bids, condition best/worst
+- **Vehicle detail** — photo gallery, full specs, labeled condition meter, condition report, damage notes, title status, selling dealer
+- **Bidding** — tiered increments, validation, persisted updated state, your bid history, "you're the high bidder"
+- **Live countdowns** — per-lot auction end normalized to "now", card badge + bid-panel timer with urgency tones; **bidding closes when a lot ends**
+- **Buy It Now** — instant purchase on the ~39 eligible lots → "You bought this lot", card *Purchased* badge, excluded from the Buy-It-Now filter
+- **Watchlist** — save/favorite (heart on cards, labeled button on detail), persisted, header "saved" pill
+- **Scoped views** — `?view=my-bids` and `?view=watchlist` with a clean reset and tailored empty states
+- **Rival outbid demo script** — `theBlock.outbidMe()` places a rival bid above yours through the service seam, flipping you to a visible **Outbid** state (see below)
+- **Foundations** — bids are an append-only **event log** (`currentBid` / `bidCount` / `isHighBidder` / `purchased` / `outbid` are *derived*); shared reactive `createStore` + `loadJSON`/`saveJSON`; auction and watchlist both ride it
 
-- Faceted filters: make, model, body style, province / city, title status, fuel, transmission, drivetrain
-- Range filters: price, year, odometer, condition grade
-- Sort: ending soon, price ↑ / ↓, year, odometer, most bids, newest listed
-- Active-filter chips, result counts, thoughtful empty states
-- URL-synced filters (shareable searches, working back button)
+---
 
-## Phase 3 — Make it feel like a live auction *(the "other users" realism)*
+## Rival bidding — the approach
 
-This is what makes an auction an *auction*. Cheap to add because of the v1 event-log model.
+Real cross-device multi-user bidding needs a backend (see Phase: Backend). Rather than simulate rivals with timers (nondeterministic, noisy in a demo), the prototype exposes a **manual demo script** that places a rival bid one increment above yours through the same `placeBid(vehicleId, amount, bidder)` seam. That flips you from *high bidder* to *Outbid* on demand — enough to exercise and demo the full **bid → outbid → re-bid** loop.
 
-- Normalize the synthetic `auction_start` times to "now" → **Live / Upcoming / Ended** states with ticking countdowns and "ending soon" urgency
-- Seeded synthetic bid history on the 88 already-active lots ("Bidder 4821 · $22,800 · 2h ago")
-- **Simulated rival bidders:** lots drift upward, and after you bid a rival can outbid you → "You've been outbid" → re-bid loop
-- **Cross-tab live bidding** via `BroadcastChannel`: two windows share auction state in real time, no server — great for the walkthrough
+Fuller versions, all cheap on top of the event-log model:
 
-## Phase 4 — Close the deal *(buyer confidence + conversion)*
+- **Timer-driven simulated rivals** — lots drift up automatically while you browse
+- **Cross-tab live bidding** via `BroadcastChannel` — two windows share state in real time, no server
+- **Real backend** — genuine different-people-on-different-devices bidding
 
-Mirrors the real auction mechanics buyers rely on to act.
+---
 
-- **Buy Now** on the ~39 eligible lots
+## Next up
+
 - **Reserve met / not-met** badge (dollar amount hidden, like real auctions)
-- Proxy / max bidding (set a ceiling, auto-increment)
-- **Watchlist** — save/favorite, persisted, "saved only" filter, outbid alerts on saved lots
-
-## Phase 5 — Trust & detail polish
-
-- Richer condition display: damage notes mapped to a vehicle diagram, title-status explainer
-- **Representative vehicle photos** *(deferred from v1)*: bundle permissively-licensed stock images mapped by body style, with a "representative" label, the real paint-color swatch, and automatic fallback to the styled placeholder; gallery zoom + keyboard nav
-- **Deal indicator**: show how strong the current bid is vs. an estimated market value (e.g. "below market"), so a buyer can judge value at a glance — complements the condition grade
-- Price guidance / comparable-sales context
+- **Proxy / max bidding** — set a ceiling, auto-increment
+- **Winning vs Outbid** sort/filter and **outbid alerts** inside the my-bids / watchlist views
+- **Deal indicator** — how strong the current bid is vs. an estimated market value ("below market")
+- **Representative vehicle photos** — bundle permissively-licensed stock images mapped by body style, with a "representative" label + real paint-color swatch and automatic fallback to the styled placeholder; gallery zoom + keyboard nav
+- Richer condition display (damage mapped to a vehicle diagram), price/comps context
 - Full accessibility pass (axe-clean), reduced-motion, complete keyboard support
 
-## Phase 6 — Real backend & multi-device *(only if needed)*
+## Backend & multi-device *(only if needed)*
 
 The one capability a frontend-only build genuinely cannot provide: real, different-people-on-different-devices bidding.
 
@@ -66,13 +55,11 @@ The one capability a frontend-only build genuinely cannot provide: real, differe
 
 ---
 
-## Architecture note — why Phase 3 multi-user is a drop-in, not a rewrite
+## Architecture note — why rival/multi-user bidding is a drop-in, not a rewrite
 
-Three v1 decisions make it cheap:
-
-1. **Bids are an append-only event log** per lot; `currentBid`, `bidCount`, and `isHighBidder` are *derived*, never stored. A rival bid is just another entry.
-2. **All mutations go through one reactive service/store** — `placeBid(vehicleId, amount, bidder?)` already accepts a bidder identity (defaults to the current buyer). A rival is simply another caller.
-3. **The UI subscribes to the store**, so any new writer — a timer-driven rival, a second tab, or later a server push — re-renders price and "outbid" state with zero component changes. Cross-tab sync becomes broadcast-on-write in that single layer.
+1. **Bids are an append-only event log** per lot; `currentBid`, `bidCount`, `isHighBidder`, `purchased`, and `outbid` are *derived*, never stored. A rival bid is just another entry.
+2. **All mutations go through one reactive service/store** — `placeBid(vehicleId, amount, bidder?)` already accepts a bidder identity (defaults to the current buyer). A rival, a second tab, or a server push are all just more callers. (The outbid demo script is exactly this.)
+3. **The UI subscribes to the store**, so any new writer re-renders price and outbid state with zero component changes. Cross-tab sync becomes broadcast-on-write in that single layer.
 
 ---
 

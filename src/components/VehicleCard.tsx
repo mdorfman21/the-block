@@ -34,15 +34,19 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
               Purchased
             </Badge>
           </div>
-        ) : (
-          auction.isHighBidder && (
-            <div className={styles.statusTag}>
-              <Badge tone="ok" dot>
-                You&rsquo;re the high bidder
-              </Badge>
-            </div>
-          )
-        )}
+        ) : auction.isHighBidder ? (
+          <div className={styles.statusTag}>
+            <Badge tone="ok" dot>
+              You&rsquo;re the high bidder
+            </Badge>
+          </div>
+        ) : auction.outbid ? (
+          <div className={styles.statusTag}>
+            <Badge tone="bad" dot>
+              Outbid
+            </Badge>
+          </div>
+        ) : null}
       </div>
 
       <div className={styles.body}>

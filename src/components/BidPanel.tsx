@@ -127,6 +127,27 @@ export default function BidPanel({ vehicle }: { vehicle: Vehicle }) {
           You&rsquo;re the high bidder
         </div>
       )}
+      {auction.outbid && (
+        <div className={styles.outbidBanner}>
+          <svg viewBox="0 0 20 20" aria-hidden="true" className={styles.alert}>
+            <path
+              d="M10 3.3l7.4 12.8H2.6L10 3.3z"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M10 8.4v3.6M10 14.2v.2"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+          </svg>
+          You&rsquo;ve been outbid
+        </div>
+      )}
 
       <div className={styles.priceBlock}>
         <span className={styles.priceLabel}>

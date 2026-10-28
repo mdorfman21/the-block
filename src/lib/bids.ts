@@ -54,6 +54,8 @@ export interface AuctionView {
   bidCount: number
   highBidder: string | null
   isHighBidder: boolean
+  /** You've bid, but a later bid (a rival) is now the high bid. */
+  outbid: boolean
   /** Whether the current buyer has placed at least one bid on this lot. */
   hasLocalBids: boolean
   /** Whether this lot was bought outright via Buy It Now. */
@@ -84,6 +86,8 @@ export function deriveAuction(
   const currentBid = top ? top.amount : vehicle.seedCurrentBid
   const displayPrice = currentBid ?? vehicle.startingBid
   const highBidder = top ? top.bidder : null
+  const isHighBidder = highBidder === me
+  const myBids = sorted.filter((e) => e.bidder === me)
   // Buy Now is a purchase, not a bid — it doesn't add to the bid count.
   const localBidCount = sorted.reduce((n, e) => (e.kind === 'buy-now' ? n : n + 1), 0)
 
@@ -92,13 +96,14 @@ export function deriveAuction(
     displayPrice,
     bidCount: vehicle.seedBidCount + localBidCount,
     highBidder,
-    isHighBidder: highBidder === me,
+    isHighBidder,
+    outbid: myBids.length > 0 && !isHighBidder && !purchased,
     hasLocalBids: sorted.length > 0,
     purchased,
     reserveMet: displayPrice >= vehicle.reservePrice,
     increment: bidIncrement(displayPrice),
     minNextBid: minNextBid(vehicle.startingBid, currentBid),
-    yourBids: sorted.filter((e) => e.bidder === me).reverse(),
+    yourBids: [...myBids].reverse(),
     localHistory: [...sorted].reverse(),
   }
 }
